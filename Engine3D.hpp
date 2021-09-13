@@ -57,6 +57,7 @@ namespace TIE{
                         glVertex3d(vector.x + size, vector.y + size, vector.z);
                         glVertex3d(vector.x, vector.y + size, vector.z);
                     glEnd();
+
                     glContext.Refresh(); 
                 
             }
