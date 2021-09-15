@@ -15,7 +15,6 @@
 #define m43 matrix[14]
 #define m44 matrix[15]
 
-
 namespace TIE {
     class Matrix44D{
     public:
@@ -26,13 +25,26 @@ namespace TIE {
             m12 = m13 = m14 = m21 = m23 = m24 = m31 = m32 = m34 = m41 = m42 = m43 = 0.0;
         }
 
+        // glOrtho
         void LoadOrthogonal(double right, double bottom){
             m11 = 2.0 / right;
             m22 = 2.0 / -bottom;
             m33 = m41 = -1.0;
-            m42 = m44 = 1;
+            m42 = m44 = 1.0;
             m12 = m13 = m14 = m21 = m23 = m24 = m31 = m32 = m34 = m43 = 0.0;
         }
+
+        // glFrustum
+        void LoadPerspective(double right, double top, double nearCut, double farCut){
+            m11 = nearCut / right;
+            m22 = nearCut / top;
+            m33 = -(farCut + nearCut) / (farCut - nearCut);
+            m34 = -1.0;
+            m43 = (-2.0 * farCut * nearCut) / (farCut - nearCut);
+            m12 = m13 = m14 = m21 = m23 = m24 = m31 = m32 = m41 = m42 = m44 = 0.0;
+        }
+
+        
 
         //Matrice * vecteur
         //Matrice Rotation
