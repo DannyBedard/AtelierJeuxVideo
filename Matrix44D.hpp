@@ -15,8 +15,16 @@
 #define m43 matrix[14]
 #define m44 matrix[15]
 
+#include <math.h>
+
 namespace TIE {
     class Matrix44D{
+    private:
+        void Swap(double i1, double i2){
+            double swap = i1;
+            i1 = i2;
+            i2 = i1;
+        }
     public:
         double matrix[16];
 
@@ -44,6 +52,41 @@ namespace TIE {
             m12 = m13 = m14 = m21 = m23 = m24 = m31 = m32 = m41 = m42 = m44 = 0.0;
         }
 
+        void Transpose(){
+            Swap(m12, m21);
+            Swap(m13, m31);
+            Swap(m14, m41);
+            Swap(m23, m32);
+            Swap(m24, m42);
+            Swap(m34, m43);
+        }
+
+        void LoadRotateX(double angle){
+            m11 = 1.0;
+            m12 = m13 = m21 = m31 = 0.0;
+            m22 = cos(angle);
+            m23 = -sin(angle);
+            m32 = sin(angle);
+            m33 = cos(angle);
+        }
+
+        void LoadRotateY(double angle){
+            m11 = cos(angle);
+            m12 = m21 = m23 = m32 = 0.0;
+            m13 = sin(angle);
+            m22 = 1.0;
+            m31 = -sin(angle);
+            m33 = cos(angle);
+        }
+
+        void LoadRotateZ(double angle){
+            m11 = cos(angle);
+            m12 = -sin(angle);
+            m13 = m23 = m31 = m32 = 0.0;
+            m21 = sin(angle);
+            m22 = cos(angle);
+            m33 = 1.0;
+        }
         
 
         //Matrice * vecteur
