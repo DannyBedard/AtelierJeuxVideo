@@ -8,6 +8,10 @@ namespace TIE{
         private:
             static SDL_Event sdlEvent;
         public:
+            static char getKey(){
+                return sdlEvent.key.keysym.sym;
+            }
+
             static unsigned int GetType(){
                 return sdlEvent.type;
             }

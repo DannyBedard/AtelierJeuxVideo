@@ -1,3 +1,6 @@
+#ifndef MATRIX44D_HPP
+#define MATRIX44D_HPP
+
 #define m11 matrix[0]
 #define m12 matrix[1]
 #define m13 matrix[2]
@@ -16,6 +19,7 @@
 #define m44 matrix[15]
 
 #include <math.h>
+#include "Vector3D.hpp"
 
 namespace TIE {
     class Matrix44D{
@@ -87,9 +91,15 @@ namespace TIE {
             m22 = cos(angle);
             m33 = 1.0;
         }
-        
 
-        //Matrice * vecteur
-        //Matrice Rotation
+       Vector3D operator*(Vector3D v){
+            v.x = m11 * v.x + m12 * v.y + m13 * v.z;
+            v.y = m21 * v.x + m22 * v.y + m23 * v.z;
+            v.z = m31 * v.x + m32 * v.y + m33 * v.z;
+
+            return v;
+        }
     };
 }
+
+#endif
