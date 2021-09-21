@@ -20,14 +20,16 @@ namespace TIE {
         public:
 
         Camera3D(double x, double y, double z){
-            position.x = x;
-            position.y = y;
-            position.z = z;
+            position = Vector3D(x, y, z);
+            //position.x = x;
+            //position.y = y;
+            //position.z = z;
         }
         Camera3D(Vector3D v){
-            position.x = v.x;
-            position.y = v.y;
-            position.z = v.z;
+            position = Vector3D(v.x, v.y, v.z);
+            //position.x = v.x;
+            //position.y = v.y;
+            //position.z = v.z;
         }
 
         void ApplyView(){

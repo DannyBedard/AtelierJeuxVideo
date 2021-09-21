@@ -18,10 +18,10 @@ namespace TIE{
         private:
         GLContext glContext;
         Observable keyUp, keyDown;
-        Camera3D camera;
+        //Camera3D camera;
 
         public:
-        camera = Camera3D(0.0, 0.0, -5.0);
+        Camera3D camera = Camera3D(0.0, 0.0, -5.0);
 
         Engine3D(){
             SDL_Init(SDL_INIT_EVERYTHING);
