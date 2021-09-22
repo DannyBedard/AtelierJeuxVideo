@@ -92,6 +92,20 @@ namespace TIE {
             m33 = 1.0;
         }
 
+        void LoadView(Vector3D front, Vector3D side, Vector3D top){
+            m11 = side.x;
+            m21 = side.y;
+            m31 = side.z;
+            m12 = side.x;
+            m22 = side.y;
+            m32 = side.z;
+            m13 = -front.x;
+            m23 = -front.y;
+            m33 = -front.y;
+            m44 = 1.0;
+            m41 = m42 = m43 = m14 = m24 = m34 = 0.0;
+        }
+
        Vector3D operator*(Vector3D v){
             v.x = m11 * v.x + m12 * v.y + m13 * v.z;
             v.y = m21 * v.x + m22 * v.y + m23 * v.z;

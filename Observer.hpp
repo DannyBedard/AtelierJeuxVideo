@@ -1,11 +1,17 @@
-#ifndef OBSERVABLE_HPP
-#define OBSERVABLE_HPP
+#ifndef OBSERVER_HPP
+#define OBSERVER_HPP
 
 #include <list>
 
 using namespace std;
 
 namespace TIE {
+    
+    class Observer {
+        public:
+        virtual void Notification() = 0;
+    };
+
     class Observable {
         public:
         list<Observer*> observers;
@@ -24,13 +30,8 @@ namespace TIE {
             }
         }
     };
-}
 
-namespace TIE {
-    class Observer {
-        public:
-        virtual void Notification() = 0;
-    };
+
 }
 
 #endif

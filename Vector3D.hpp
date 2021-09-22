@@ -82,13 +82,13 @@ namespace TIE {
         return Vector3D((y * v.z) - (v.y * z), (z * v.x) - (v.z * x),(x * v.y) - (v.x * y));
     }
 
-    Vector3D operator*(Matrix44D m){
+    /*Vector3D operator*(Matrix44D m){
         x = m.m11 * x + m.m12 * y + m.m13 * z;
         y = m.m21 * x + m.m22 * y + m.m23 * z;
         z = m.m31 * x + m.m32 * y + m.m33 * z;
 
         return Vector3D(x, y, z);
-    }
+    }*/
 
     };
 }

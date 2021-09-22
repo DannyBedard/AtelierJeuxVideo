@@ -9,7 +9,7 @@
 #include "Matrix44D.hpp"
 #include "Vector3D.hpp"
 #include "Camera3D.hpp"
-#include "observable.hpp"
+#include "EventDispatcher.hpp"
 
 using namespace std;
 
@@ -17,8 +17,7 @@ namespace TIE{
     class Engine3D : public Engine<Engine3D>{
         private:
         GLContext glContext;
-        Observable keyUp, keyDown;
-        //Camera3D camera;
+        EventDispatcher eventDispatcher;
 
         public:
         Camera3D camera = Camera3D(0.0, 0.0, -5.0);
@@ -27,8 +26,14 @@ namespace TIE{
             SDL_Init(SDL_INIT_EVERYTHING);
             IMG_Init(IMG_INIT_PNG);
             TTF_Init();
-            keyDown.AddObserver(&camera);
-            keyUp.AddObserver(&camera);
+            eventDispatcher.Bind(SDL_KEYDOWN, &camera);
+            eventDispatcher.Bind(SDL_KEYUP, &camera);
+            eventDispatcher.Bind(SDL_MOUSEMOTION, &camera);
+        }
+        ~Engine3D(){
+            eventDispatcher.Unbind(SDL_KEYDOWN, &camera);
+            eventDispatcher.Unbind(SDL_KEYUP, &camera);
+            SDL_Quit();
         }
 
         void Start(){
@@ -89,12 +94,8 @@ namespace TIE{
                         case SDL_QUIT: 
                             isOpen = false;
                             break;
-                        case SDL_KEYUP:
-                            keyUp.Notify();
-                        break;
-                        case SDL_KEYDOWN:
-                            keyDown.Notify();
-                        break;
+                        default:
+                            eventDispatcher.Dispatch();
                     }
                 }
 
@@ -161,9 +162,6 @@ namespace TIE{
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
                     glMultMatrixd(perspectiveProjection.matrix);
-                    glMatrixMode(GL_MODELVIEW);
-                    glLoadIdentity();
-
                     camera.ApplyView();
 
                     glBegin(GL_QUADS);
