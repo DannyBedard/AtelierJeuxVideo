@@ -1,5 +1,5 @@
 #ifndef GAMEEVENT_HPP
-#define GEMEEVENT_HPP
+#define GAMEEVENT_HPP
 
 #include <SDL2/SDL.h>
 
