@@ -51,14 +51,14 @@ namespace TIE {
         //Va devenir virtuel pure
         void Update(){
             if(mouseMotion) RotateVision(2.0, 2.0);
-            if(keyW) position.z -= 0.001;
-            if(keyS) position.z += 0.001;
-            if(keyA) position.x -= 0.001;
-            if(keyD) position.x += 0.001;
+            if(keyW) position.z -= 0.1;
+            if(keyS) position.z += 0.1;
+            if(keyA) position.x -= 0.1;
+            if(keyD) position.x += 0.1;
             if(keySpace) 
-                position.y += 0.001; 
+                position.y += 0.1; 
             else if (position.y > 0.0)
-                position.y -= 0.001; 
+                position.y -= 0.1; 
         }
 
         void RotateVision(double angleX, double angleY){

@@ -1,5 +1,5 @@
-#ifndef CAMERA1PERSON_HPP
-#define CAMERA1PERSON_HPP
+#ifndef FIRSTPERSONCAMERA_HPP
+#define FIRSTPERSONCAMERA_HPP
 
 #include "Camera3D.hpp"
 

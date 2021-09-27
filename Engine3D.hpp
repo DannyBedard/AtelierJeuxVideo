@@ -41,6 +41,8 @@ namespace TIE{
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
             glEnable(GL_LIGHT0);
+            SDL_SetRelativeMouseMode(SDL_TRUE); 
+            //SDL_WarpMouseInWindow( Window::GetSize.x, Window::GetSize.y);
 
             unsigned int textureId;
             glGenTextures(1.0, &textureId);
@@ -58,9 +60,9 @@ namespace TIE{
             Matrix44D rotateZ;
             SDL_Point windowSize = glContext.GetSize();
             orthogonalProjection.LoadOrthogonal(windowSize.x, windowSize.y);
-            double angleX = 0.00005;
-            double angleY = 0.00003;
-            double angleZ = 0.00007;
+            double angleX = 0.005;
+            double angleY = 0.003;
+            double angleZ = 0.007;
             rotateX.LoadRotateX(angleX);
             rotateY.LoadRotateY(angleY);
             rotateZ.LoadRotateZ(angleZ);
@@ -152,8 +154,6 @@ namespace TIE{
                     nBottom = rotateZ * nBottom;
                     nRight = rotateZ * nRight;
                     nLeft = rotateZ * nLeft;
-
-
 
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
