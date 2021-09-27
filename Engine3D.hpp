@@ -20,7 +20,7 @@ namespace TIE{
         EventDispatcher eventDispatcher;
 
         public:
-        Camera3D camera = Camera3D(0.0, 0.0, -5.0);
+        Camera3D camera = Camera3D(0.0, 0.0, 5.0);
 
         Engine3D(){
             SDL_Init(SDL_INIT_EVERYTHING);
@@ -41,8 +41,7 @@ namespace TIE{
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
             glEnable(GL_LIGHT0);
-            SDL_SetRelativeMouseMode(SDL_TRUE); 
-            //SDL_WarpMouseInWindow( Window::GetSize.x, Window::GetSize.y);
+            //SDL_SetRelativeMouseMode(SDL_TRUE); 
 
             unsigned int textureId;
             glGenTextures(1.0, &textureId);
@@ -60,17 +59,44 @@ namespace TIE{
             Matrix44D rotateZ;
             SDL_Point windowSize = glContext.GetSize();
             orthogonalProjection.LoadOrthogonal(windowSize.x, windowSize.y);
-            double angleX = 0.005;
-            double angleY = 0.003;
-            double angleZ = 0.007;
+            double angleX = 0.0005;
+            double angleY = 0.0003;
+            double angleZ = 0.0007;
             rotateX.LoadRotateX(angleX);
             rotateY.LoadRotateY(angleY);
             rotateZ.LoadRotateZ(angleZ);
 
+            size_t vertexCount = 24;
+            double vertices[vertexCount * 3] = {
+                -1.0, 1.0, 1.0,1.0, 1.0, 1.0,1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
+                -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
+                -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0,
+                -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 
+                1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 
+                -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, -1.0}; // * 3 composante par sommet
+
+            double normals[vertexCount * 3] = {
+                0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,
+                0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+                0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+                1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+                -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0
+            };
+            
+            double textureCoords[vertexCount * 2] = {
+                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+            }; //6 face * 4 sommet * 2
+            
+
             double right = tan(45.0 * 3.14159 / 180.0) * 1.0;
             double top = ((double)windowSize.y / (double)windowSize.x) * right;
             perspectiveProjection.LoadPerspective(right, top, 1.0, 100.0);
-
             //Vecteur Cube
             Vector3D v1(-1.0, 1.0, -1.0);
             Vector3D v2(1.0, 1.0, -1.0);
@@ -80,7 +106,6 @@ namespace TIE{
             Vector3D v6(1.0, -1.0, -1.0);
             Vector3D v7(1.0, -1.0, 1.0);
             Vector3D v8(-1.0, -1.0, 1.0);
-
             //Vecteur Normal
             Vector3D nFront(0.0, 0.0, 1.0);
             Vector3D nNear(0.0, 0.0, -1.0);
@@ -162,9 +187,12 @@ namespace TIE{
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
                     glMultMatrixd(perspectiveProjection.matrix);
+                    //glMatrixMode(GL_MODELVIEW);
+                    //glLoadIdentity();
+                    //glTranslated(0.0,0.0,-5.0);
                     camera.ApplyView();
 
-                    glBegin(GL_QUADS);
+                    /*glBegin(GL_QUADS);
                         //AVANT
                         glNormal3d(nFront.x, nFront.y, nFront.z);
                         glTexCoord2d(0.0, 0.0); glVertex3d(v4.x, v4.y, v4.z);
@@ -202,7 +230,7 @@ namespace TIE{
                         glTexCoord2d(1.0, 1.0); glVertex3d(v8.x, v8.y, v8.z);
                         glTexCoord2d(0.0, 1.0); glVertex3d(v5.x, v5.y, v5.z);
 
-                    glEnd(); 
+                    glEnd(); */
 
                     // TODO 3D
                     /*glMatrixMode(GL_PROJECTION);
@@ -211,6 +239,17 @@ namespace TIE{
                     glMatrixMode(GL_MODELVIEW);
                     glLoadIdentity();*/
                     // TODO 2D
+
+
+                    glEnableClientState(GL_VERTEX_ARRAY);
+                    glEnableClientState(GL_NORMAL_ARRAY);
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+                    glVertexPointer(3, GL_DOUBLE, 0, vertices);//3 pour 3D, type de donnée, commence à la case 0 du tableau, tableau contenant les sommets
+                    glNormalPointer(GL_DOUBLE, 0, normals); //Les normals sont toujours en 3D
+                    glTexCoordPointer(2, GL_DOUBLE, 0, textureCoords);
+
+                    glDrawArrays(GL_QUADS, 0, vertexCount);//Ce qu'on mettais dans le GL_Begin, à partir de 0, combien de sommet à afficher
 
                     glContext.Refresh(); 
                 

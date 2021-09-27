@@ -8,6 +8,7 @@
 #define keySpace keys[4]
 #define mouseMotion keys[5]
 
+#include <iostream>
 #include "Vector3D.hpp"
 #include "Observer.hpp"
 
@@ -17,7 +18,6 @@ namespace TIE {
         Vector3D position;
         Matrix44D viewMatrix;
         Vector3D target;
-        Vector3D actualPosition;
         Vector3D up;
 
         bool keys [6] = {false, false, false, false, false, false};
@@ -26,39 +26,42 @@ namespace TIE {
 
         Camera3D(double x, double y, double z){
             viewMatrix.LoadIdentity();
-            target = Vector3D (0.0, 0.0, -1.0);
-            actualPosition = Vector3D (0.0, 0.0, 0.0);
+            target = Vector3D (0.0, 0.0, 0.0);
             up = Vector3D(0.0, 1.0, 0.0);
             position = Vector3D(x, y, z);
         }
-        Camera3D(Vector3D v){
+        /*Camera3D(Vector3D v){
             viewMatrix.LoadIdentity();
             target = Vector3D (0.0, 0.0, -1.0);
             actualPosition = Vector3D (0.0, 0.0, 0.0);
             up = Vector3D(0.0, 1.0, 0.0);
             position = Vector3D(v.x, v.y, v.z);
-        }
+        }*/
 
         void ApplyView(){
             // Multiplier la matrice de vue
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             glMultMatrixd(viewMatrix.matrix);
-
-            glTranslated(position.x, position.y, position.z);
+            glTranslated(-position.x, -position.y, -position.z);
         }
 
         //Va devenir virtuel pure
         void Update(){
-            if(mouseMotion) RotateVision(2.0, 2.0);
-            if(keyW) position.z -= 0.1;
-            if(keyS) position.z += 0.1;
-            if(keyA) position.x -= 0.1;
-            if(keyD) position.x += 0.1;
+            if(mouseMotion) {
+                RotateVision(2.0, 2.0);
+            }
+
+            if(keyW) {
+                position.z += 0.001;
+            }
+            if(keyS) position.z -= 0.001;
+            if(keyA) position.x += 0.001;
+            if(keyD) position.x -= 0.001;
             if(keySpace) 
-                position.y += 0.1; 
+                position.y += 0.001; 
             else if (position.y > 0.0)
-                position.y -= 0.1; 
+                position.y -= 0.001; 
         }
 
         void RotateVision(double angleX, double angleY){
@@ -66,11 +69,14 @@ namespace TIE {
             Matrix44D matrixRotationY;
             matrixRotationX.LoadRotateX(angleX);
             matrixRotationY.LoadRotateY(angleY);
-            Vector3D front = matrixRotationY * front;
 
-            front = target - actualPosition;
+            Vector3D front = target - position;
+            front = matrixRotationY * front;
+            front.Normalize();
             Vector3D side = front % up;
-            Vector3D up = side % front;
+            side.Normalize();
+            up = side % front;
+            up.Normalize();
 
             viewMatrix.LoadView(front, side, up);
         }
@@ -123,6 +129,9 @@ namespace TIE {
                             keySpace = true;
                         break;
                     };
+                    case SDL_MOUSEMOTION:
+                        mouseMotion = true;
+                        break;
                     break;
             };
         }
