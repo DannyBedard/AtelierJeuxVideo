@@ -8,7 +8,7 @@ namespace TIE{
         private:
             static SDL_Event sdlEvent;
         public:
-            static char getKey(){
+            static char GetKey(){
                 return sdlEvent.key.keysym.sym;
             }
 
@@ -18,6 +18,14 @@ namespace TIE{
 
             static int Poll(){
                 return SDL_PollEvent(&sdlEvent);
+            }
+
+            static double GetRelMouseX(){
+                return static_cast<double>(sdlEvent.motion.xrel);
+            }
+
+            static double GetRelMouseY(){
+                return static_cast<double>(sdlEvent.motion.yrel);
             }
     };
 

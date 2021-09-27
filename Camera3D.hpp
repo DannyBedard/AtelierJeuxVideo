@@ -49,7 +49,7 @@ namespace TIE {
         //Va devenir virtuel pure
         void Update(){
             if(mouseMotion) {
-                RotateVision(2.0, 2.0);
+                RotateVision(GameEvent::GetRelMouseX, GameEvent::GetRelMouseY);
             }
 
             if(keyW) {
@@ -84,7 +84,7 @@ namespace TIE {
         void Notification(){
             switch(GameEvent::GetType()){
                 case SDL_KEYUP:
-                    switch(GameEvent::getKey()){
+                    switch(GameEvent::GetKey()){
                         case SDLK_w:
                             keyW = false;
                         break;
@@ -108,7 +108,7 @@ namespace TIE {
                     break;
 
                 case SDL_KEYDOWN:
-                    switch(GameEvent::getKey()){
+                    switch(GameEvent::GetKey()){
                         case SDLK_w:
                             keyW = true;
                         break;
