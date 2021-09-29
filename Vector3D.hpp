@@ -4,6 +4,7 @@
 #pragma once
 #include "Matrix44D.hpp"
 #include <cmath>
+#include <math.h>
 
 # define PI 3.14159265358979323846
 

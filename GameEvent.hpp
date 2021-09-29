@@ -20,12 +20,11 @@ namespace TIE{
                 return SDL_PollEvent(&sdlEvent);
             }
 
-            static double GetRelMouseX(){
-                return static_cast<double>(sdlEvent.motion.xrel);
-            }
-
-            static double GetRelMouseY(){
-                return static_cast<double>(sdlEvent.motion.yrel);
+            static SDL_Point GetRelMouse(){
+                SDL_Point position;
+                position.x = sdlEvent.motion.xrel;
+                position.y = sdlEvent.motion.yrel;
+                return position;
             }
     };
 

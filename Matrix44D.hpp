@@ -96,12 +96,15 @@ namespace TIE {
             m11 = side.x;
             m21 = side.y;
             m31 = side.z;
+
             m12 = side.x;
             m22 = side.y;
             m32 = side.z;
-            m13 = -front.x;
-            m23 = -front.y;
-            m33 = -front.y;
+
+            m13 = - front.x;
+            m23 = - front.y;
+            m33 = - front.y;
+            
             m44 = 1.0;
             m41 = m42 = m43 = m14 = m24 = m34 = 0.0;
         }

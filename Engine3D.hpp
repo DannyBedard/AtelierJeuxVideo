@@ -8,8 +8,9 @@
 #include "GameEvent.hpp"
 #include "Matrix44D.hpp"
 #include "Vector3D.hpp"
-#include "Camera3D.hpp"
+#include "FirstPersonCamera.hpp"
 #include "EventDispatcher.hpp"
+#include "TextureMesh3D.hpp"
 
 using namespace std;
 
@@ -18,9 +19,10 @@ namespace TIE{
         private:
         GLContext glContext;
         EventDispatcher eventDispatcher;
+        TextureMesh3D texture;
 
         public:
-        Camera3D camera = Camera3D(0.0, 0.0, 5.0);
+        FirstPersonCamera camera = FirstPersonCamera(0.0, 0.0, 10.0);
 
         Engine3D(){
             SDL_Init(SDL_INIT_EVERYTHING);
@@ -33,6 +35,7 @@ namespace TIE{
         ~Engine3D(){
             eventDispatcher.Unbind(SDL_KEYDOWN, &camera);
             eventDispatcher.Unbind(SDL_KEYUP, &camera);
+            eventDispatcher.Unbind(SDL_MOUSEMOTION, &camera);
             SDL_Quit();
         }
 
@@ -41,7 +44,7 @@ namespace TIE{
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
             glEnable(GL_LIGHT0);
-            //SDL_SetRelativeMouseMode(SDL_TRUE); 
+            SDL_SetRelativeMouseMode(SDL_TRUE); 
 
             unsigned int textureId;
             glGenTextures(1.0, &textureId);
@@ -65,6 +68,8 @@ namespace TIE{
             rotateX.LoadRotateX(angleX);
             rotateY.LoadRotateY(angleY);
             rotateZ.LoadRotateZ(angleZ);
+
+            texture.Load("crate.obj");
 
             size_t vertexCount = 24;
             double vertices[vertexCount * 3] = {
@@ -127,7 +132,6 @@ namespace TIE{
                 }
 
                     // TODO : HANDLE UPDATE
-                    
                     //Multiplication par rotation
 
                     //Cube
@@ -158,7 +162,7 @@ namespace TIE{
                     v7 = rotateZ * v7;
                     v8 = rotateZ * v8;
 
-                    //Veceur Normal (Lumière)
+                    //Vecteur Normal (Lumière)
                     nFront = rotateX * nFront;
                     nNear = rotateX * nNear;
                     nTop = rotateX * nTop;
@@ -187,59 +191,7 @@ namespace TIE{
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
                     glMultMatrixd(perspectiveProjection.matrix);
-                    //glMatrixMode(GL_MODELVIEW);
-                    //glLoadIdentity();
-                    //glTranslated(0.0,0.0,-5.0);
                     camera.ApplyView();
-
-                    /*glBegin(GL_QUADS);
-                        //AVANT
-                        glNormal3d(nFront.x, nFront.y, nFront.z);
-                        glTexCoord2d(0.0, 0.0); glVertex3d(v4.x, v4.y, v4.z);
-                        glTexCoord2d(1.0, 0.0); glVertex3d(v3.x, v3.y, v3.z);
-                        glTexCoord2d(1.0, 1.0); glVertex3d(v7.x, v7.y, v7.z);
-                        glTexCoord2d(0.0, 1.0); glVertex3d(v8.x, v8.y, v8.z);
-                        //ARRIERE
-                        glNormal3d(nNear.x, nNear.y, nNear.z);
-                        glTexCoord2d(0.0, 0.0); glVertex3d(v1.x, v1.y, v1.z);
-                        glTexCoord2d(1.0, 0.0); glVertex3d(v2.x, v2.y, v2.z);
-                        glTexCoord2d(1.0, 1.0); glVertex3d(v6.x, v6.y, v6.z);
-                        glTexCoord2d(0.0, 1.0); glVertex3d(v5.x, v5.y, v5.z);
-                        //DESSUS
-                        glNormal3d(nTop.x, nTop.y, nTop.z);
-                        glTexCoord2d(0.0, 0.0); glVertex3d(v1.x, v1.y, v1.z);
-                        glTexCoord2d(1.0, 0.0); glVertex3d(v2.x, v2.y, v2.z);
-                        glTexCoord2d(1.0, 1.0); glVertex3d(v3.x, v3.y, v3.z);
-                        glTexCoord2d(0.0, 1.0); glVertex3d(v4.x, v4.y, v4.z);
-                        //DESSOUS
-                        glNormal3d(nBottom.x, nBottom.y, nBottom.z);
-                        glTexCoord2d(0.0, 0.0); glVertex3d(v5.x, v5.y, v5.z);
-                        glTexCoord2d(1.0, 0.0); glVertex3d(v6.x, v6.y, v6.z);
-                        glTexCoord2d(1.0, 1.0); glVertex3d(v7.x, v7.y, v7.z);
-                        glTexCoord2d(0.0, 1.0); glVertex3d(v8.x, v8.y, v8.z);
-                        //DROIT
-                        glNormal3d(nRight.x, nRight.y, nRight.z);
-                        glTexCoord2d(0.0, 0.0); glVertex3d(v3.x, v3.y, v3.z);
-                        glTexCoord2d(1.0, 0.0); glVertex3d(v2.x, v2.y, v2.z);
-                        glTexCoord2d(1.0, 1.0); glVertex3d(v6.x, v6.y, v6.z);
-                        glTexCoord2d(0.0, 1.0); glVertex3d(v7.x, v7.y, v7.z);
-                        //GAUCHE
-                        glNormal3d(nLeft.x, nLeft.y, nLeft.z);
-                        glTexCoord2d(0.0, 0.0); glVertex3d(v1.x, v1.y, v1.z);
-                        glTexCoord2d(1.0, 0.0); glVertex3d(v4.x, v4.y, v4.z);
-                        glTexCoord2d(1.0, 1.0); glVertex3d(v8.x, v8.y, v8.z);
-                        glTexCoord2d(0.0, 1.0); glVertex3d(v5.x, v5.y, v5.z);
-
-                    glEnd(); */
-
-                    // TODO 3D
-                    /*glMatrixMode(GL_PROJECTION);
-                    glLoadIdentity();
-                    glMultMatrixd(orthogonalProjection.matrix);
-                    glMatrixMode(GL_MODELVIEW);
-                    glLoadIdentity();*/
-                    // TODO 2D
-
 
                     glEnableClientState(GL_VERTEX_ARRAY);
                     glEnableClientState(GL_NORMAL_ARRAY);
@@ -251,10 +203,44 @@ namespace TIE{
 
                     glDrawArrays(GL_QUADS, 0, vertexCount);//Ce qu'on mettais dans le GL_Begin, à partir de 0, combien de sommet à afficher
 
+                    draw();
+                    
                     glContext.Refresh(); 
                 
             }
-        }
+        }       
+            void draw(){
+                glEnable(GL_TEXTURE_2D);
+                GLuint texture;
+                glGenTextures(1,&texture);
+
+                unsigned char texture_data[2][2][4] =
+                                {
+                                    0,0,0,255,  255,255,255,255,
+                                    255,255,255,255,    0,0,0,255
+                                };
+
+                glBindTexture(GL_TEXTURE_2D,texture);
+                glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,2,2,0,GL_RGBA,GL_UNSIGNED_BYTE,texture_data);
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                                GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                                GL_NEAREST);
+
+                glBegin(GL_QUADS);
+
+                glTexCoord2f(0.0,0.0);  glVertex3f(-50.0,-5.0,-50.0);
+                glTexCoord2f(25.0,0.0);  glVertex3f(50.0,-5.0,-50.0);
+                glTexCoord2f(25.0,25.0);  glVertex3f(50.0,-5.0,50.0);
+                glTexCoord2f(0.0,25.0);  glVertex3f(-50.0,-5.0,50.0);
+
+                glEnd();
+
+                glDisable(GL_TEXTURE_2D);
+            }
     };
 }
 
