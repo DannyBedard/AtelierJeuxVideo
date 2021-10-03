@@ -19,7 +19,7 @@ namespace TIE{
         private:
         GLContext glContext;
         EventDispatcher eventDispatcher;
-        TextureMesh3D texture;
+        //TextureMesh3D texture;
 
         public:
         FirstPersonCamera camera = FirstPersonCamera(0.0, 0.0, 10.0);
@@ -69,7 +69,7 @@ namespace TIE{
             rotateY.LoadRotateY(angleY);
             rotateZ.LoadRotateZ(angleZ);
 
-            texture.Load("crate.obj");
+            //texture.Load("crate.obj");
 
             size_t vertexCount = 24;
             double vertices[vertexCount * 3] = {

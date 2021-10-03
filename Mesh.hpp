@@ -1,10 +1,12 @@
 #ifndef MESH_HPP
 #define MESH_HPP
 
+#include <stdlib.h>
+
 namespace TIE {
     class Mesh{
         protected:
-        vertices[double*] vertices;
+        //vertices[double*] vertices;
         size_t vertexCount;
 
         public:
