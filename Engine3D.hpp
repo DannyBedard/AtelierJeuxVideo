@@ -19,7 +19,8 @@ namespace TIE{
         private:
         GLContext glContext;
         EventDispatcher eventDispatcher;
-        //TextureMesh3D texture;
+        TextureMesh3D texture;
+        TTF_Font* ttfFont;
 
         public:
         FirstPersonCamera camera = FirstPersonCamera(0.0, 0.0, 10.0);
@@ -27,7 +28,10 @@ namespace TIE{
         Engine3D(){
             SDL_Init(SDL_INIT_EVERYTHING);
             IMG_Init(IMG_INIT_PNG);
-            TTF_Init();
+            TTF_Init(); //Essentiel, ça compile, mais la font va être nullptr (0x0)
+
+            ttfFont = TTF_OpenFont("LafayetteComicPro.ttf", 42);
+
             eventDispatcher.Bind(SDL_KEYDOWN, &camera);
             eventDispatcher.Bind(SDL_KEYUP, &camera);
             eventDispatcher.Bind(SDL_MOUSEMOTION, &camera);
@@ -36,25 +40,47 @@ namespace TIE{
             eventDispatcher.Unbind(SDL_KEYDOWN, &camera);
             eventDispatcher.Unbind(SDL_KEYUP, &camera);
             eventDispatcher.Unbind(SDL_MOUSEMOTION, &camera);
+
+            TTF_CloseFont(ttfFont);
+
+            TTF_Quit();
             SDL_Quit();
         }
 
         void Start(){
+            // Commutateurs OpenGL
             glEnable(GL_TEXTURE_2D);
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_LIGHTING);
             glEnable(GL_LIGHT0);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             SDL_SetRelativeMouseMode(SDL_TRUE); 
 
-            unsigned int textureId;
-            glGenTextures(1.0, &textureId);
-            glBindTexture(GL_TEXTURE_2D, textureId);
+            // Chargement de la texture du caisson
+            unsigned int crateTextureId;
+            glGenTextures(1.0, &crateTextureId);
+            glBindTexture(GL_TEXTURE_2D, crateTextureId);
             SDL_Surface* sdlSurface = IMG_Load("crate.png");
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sdlSurface->w, sdlSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, sdlSurface->pixels);
             SDL_FreeSurface(sdlSurface);
+
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+            // Chargement de la texture du texte
+            unsigned int fontTextureId;
+            glGenTextures(1.0, &fontTextureId);
+            glBindTexture(GL_TEXTURE_2D, fontTextureId);
+            sdlSurface = TTF_RenderText_Blended(ttfFont, "Hola Mundo", {255, 255, 255, 220});
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sdlSurface->w, sdlSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, sdlSurface->pixels);
+            int fontWidth = sdlSurface->w, fontHeight = sdlSurface->h;
+            SDL_FreeSurface(sdlSurface);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+            //Déclaration Matrice et angle de rotation
             Matrix44D perspectiveProjection;
             Matrix44D orthogonalProjection;
             Matrix44D rotateX;
@@ -69,7 +95,7 @@ namespace TIE{
             rotateY.LoadRotateY(angleY);
             rotateZ.LoadRotateZ(angleZ);
 
-            //texture.Load("crate.obj");
+            texture.Load("crate.obj");
 
             size_t vertexCount = 24;
             double vertices[vertexCount * 3] = {
@@ -184,14 +210,36 @@ namespace TIE{
                     nRight = rotateZ * nRight;
                     nLeft = rotateZ * nLeft;
 
+                    //Vidage de la fenêtre
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                    camera.Update();
+                    //Gestion de l'affichage
+                    //Mode 2D
+                    glMatrixMode(GL_PROJECTION);
+                    glLoadIdentity();
+                    glMultMatrixd(orthogonalProjection.matrix);
+                    glMatrixMode(GL_MODELVIEW);
+                    glLoadIdentity();
 
+                    glBindTexture(GL_TEXTURE_2D, fontTextureId);
+                    glBegin(GL_QUADS);
+                        glTexCoord2d(0.0, 0.0);  glVertex3d(0.0, 0.0, 0.0);
+                        glTexCoord2d(1.0, 0.0);  glVertex3d((double)fontWidth, 0.0, 0.0);
+                        glTexCoord2d(1.0, 1.0);  glVertex3d((double)fontWidth, (double)fontHeight, 0.0);
+                        glTexCoord2d(0.0, 1.0);  glVertex3d(0.0, (double)fontHeight, 0.0);
+                    glEnd();
+
+                    //Mode 3D
+                    camera.Update();
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
                     glMultMatrixd(perspectiveProjection.matrix);
+                    glMatrixMode(GL_MODELVIEW);
+                    glLoadIdentity();
+                    // Application de la matrice de vue
                     camera.ApplyView();
+
+                    glBindTexture(GL_TEXTURE_2D, crateTextureId);
 
                     glEnableClientState(GL_VERTEX_ARRAY);
                     glEnableClientState(GL_NORMAL_ARRAY);
@@ -204,6 +252,8 @@ namespace TIE{
                     glDrawArrays(GL_QUADS, 0, vertexCount);//Ce qu'on mettais dans le GL_Begin, à partir de 0, combien de sommet à afficher
                     
                     glContext.Refresh(); 
+                    // Incrémenter une variable qui serra affichée
+                    // le réinitialiser quand le chrono passe une seconde
                 
             }
         }       

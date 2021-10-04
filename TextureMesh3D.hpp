@@ -5,57 +5,60 @@
 #include <fstream>
 #include <bits/stdc++.h>
 
+using namespace std;
+
 namespace TIE {
     class TextureMesh3D : public Mesh {
         private:
-        std::fstream file;
         vector<double> vSommets, vNormals, vTextures, faces;
         public:
 
         void Load(string fileName){
+            ifstream file;
             vector<double> sommetsTMP, normalsTMP, texturesTMP, facesTMP;
             double x, y, z;
             int faceIndex;
             char lineType;
             file.open(fileName);
+            string line;
+
+            getline(file, line, '\n');
 
             file >> lineType;
             
             while (lineType != EOF){
                 switch(lineType){
                     case '#':
+                    file.ignore(INT_MAX, '\n');
+                    file >> lineType;
+                    getline(file, line, '\n');
                     break;
                     case 'v':
                         file >> lineType;
-                        switch (lineType)
-                        {
-                            case ' ':
-                                file >> x;
-                                file >> y;
-                                file >> z;
-                                sommetsTMP.push_back(x);
-                                sommetsTMP.push_back(y);
-                                sommetsTMP.push_back(z);
-                                vertexCount+=3;
-                                break;
-                            
-                            case 't':
-                                file >> x;
-                                file >> y;
-                                texturesTMP.push_back(x);
-                                texturesTMP.push_back(y);
-                                break;
-                            
-                            case 'n':
-                                file >> x;
-                                file >> y;
-                                file >> z;
-                                normalsTMP.push_back(x);
-                                normalsTMP.push_back(y);
-                                normalsTMP.push_back(z);
-                                break;
-                            
+                        if (line[0] == ' '){
+                            file >> x;
+                            file >> y;
+                            file >> z;
+                            sommetsTMP.push_back(x);
+                            sommetsTMP.push_back(y);
+                            sommetsTMP.push_back(z);
+                            vertexCount+=3;
+                        } else if (line[0] == 'k'){
+                            file >> x;
+                            file >> y;
+                            texturesTMP.push_back(x);
+                            texturesTMP.push_back(y);
+                        } else if (line[0] == 'n'){
+                            file >> x;
+                            file >> y;
+                            file >> z;
+                            normalsTMP.push_back(x);
+                            normalsTMP.push_back(y);
+                            normalsTMP.push_back(z);
                         }
+                        file >> lineType;
+                        getline(file, line, '\n');
+                        break;
                     case 'f':
                     for (int i=0; i<9; i++){
                         file >> lineType;

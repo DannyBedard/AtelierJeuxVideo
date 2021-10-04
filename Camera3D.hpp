@@ -37,8 +37,6 @@ namespace TIE {
         virtual void Update() = 0;
 
         void ApplyView(){
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
             glMultMatrixd(viewMatrix.matrix);
             glTranslated(-position.x, -position.y, -position.z);
         }
