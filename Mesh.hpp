@@ -6,11 +6,11 @@
 namespace TIE {
     class Mesh{
         protected:
-        //vertices[double*] vertices;
-        size_t vertexCount;
+        double* vertices;
+        size_t vertexCount = 0;
 
         public:
-        virtual void Load(char* fileName) = 0;
+        virtual void Load(string fileName) = 0;
 
         virtual void Draw() = 0;
         

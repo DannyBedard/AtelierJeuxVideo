@@ -202,8 +202,6 @@ namespace TIE{
                     glTexCoordPointer(2, GL_DOUBLE, 0, textureCoords);
 
                     glDrawArrays(GL_QUADS, 0, vertexCount);//Ce qu'on mettais dans le GL_Begin, à partir de 0, combien de sommet à afficher
-
-                    draw();
                     
                     glContext.Refresh(); 
                 
