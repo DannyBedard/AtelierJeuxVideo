@@ -13,7 +13,6 @@ namespace TIE {
         virtual void Load(string fileName) = 0;
 
         virtual void Draw() = 0;
-        
     };
 }
 
