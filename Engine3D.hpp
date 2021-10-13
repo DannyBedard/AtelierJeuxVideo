@@ -110,7 +110,7 @@ namespace TIE{
 
             perspectiveProjection.LoadPerspective(right, top, 1.0, 100.0);
 
-            int sec = 0;
+            int frame = 0;
             int frameCount = 0;
             bool isOpen = true;
             while(isOpen){
@@ -123,15 +123,19 @@ namespace TIE{
                             eventDispatcher.Dispatch();
                             break;
                     }
-                    
                 }
                     // Gestion des mises à jour
                     camera.Update();
                     
                     //Affichage seconde
-                    frameCount = sec;
+
+                    if (chrono.Tick()){
+                        frameCount = frame;
+                        chrono.Reset();
+                        frame = 0;
+                    }
                     
-                    sec ++;
+                    frame ++;
                     std::string s = std::to_string(frameCount);
                     char const *pchar = s.c_str();
 
