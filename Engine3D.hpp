@@ -75,17 +75,12 @@ namespace TIE{
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
             // Chargement de la texture du texte
-            /*unsigned int fontTextureId;
+            unsigned int fontTextureId;
             glGenTextures(1.0, &fontTextureId);
             glBindTexture(GL_TEXTURE_2D, fontTextureId);
 
-            sdlSurface = TTF_RenderText_Blended(ttfFont, "Hola Mundo", {255, 255, 255, 220});
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sdlSurface->w, sdlSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, sdlSurface->pixels);
-            int fontWidth = sdlSurface->w, fontHeight = sdlSurface->h;
-            SDL_FreeSurface(sdlSurface);
-
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);*/
+            //Chargement Maillage
+            texture.Load("crate.obj");
 
             //angle de rotation du maillage
             double angleX = 0.0005, angleY = 0.0003, angleZ = 0.0007;
@@ -109,10 +104,12 @@ namespace TIE{
             rotateZ.LoadRotateZ(angleZ);
 
             perspectiveProjection.LoadPerspective(right, top, 1.0, 100.0);
+    
 
             int frame = 0;
             int frameCount = 0;
             bool isOpen = true;
+            int fontWidth, fontHeight;
             while(isOpen){
                 while(GameEvent::Poll()){
                     switch(GameEvent::GetType()){
@@ -128,28 +125,25 @@ namespace TIE{
                     camera.Update();
                     
                     //Affichage seconde
-
-                    if (chrono.Tick()){
+                    if (chrono.GetElapsedSeconds() > 1.0){
                         frameCount = frame;
-                        chrono.Reset();
                         frame = 0;
-                    }
-                    
-                    frame ++;
+                        glBindTexture(GL_TEXTURE_2D, fontTextureId);
+                        chrono.Reset();
+
                     std::string s = std::to_string(frameCount);
                     char const *pchar = s.c_str();
-
-                    unsigned int fontTextureId;
-                    glGenTextures(1.0, &fontTextureId);
-                    glBindTexture(GL_TEXTURE_2D, fontTextureId);
                     
                     sdlSurface = TTF_RenderText_Blended(ttfFont, pchar, {255, 255, 255, 220});
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sdlSurface->w, sdlSurface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, sdlSurface->pixels);
-                    int fontWidth = sdlSurface->w, fontHeight = sdlSurface->h;
+                    fontWidth = sdlSurface->w, fontHeight = sdlSurface->h;
                     SDL_FreeSurface(sdlSurface);
 
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
                     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                    }
+                    
+                    frame ++;
 
                     // Gestion de l'affichage
                     //Vidage de la fenêtre
@@ -182,16 +176,14 @@ namespace TIE{
 
                     // Affichage du caisson
                     floor(crateTextureId);
-                    texture.Load("crate.obj");
-                    texture.Draw();
+                    texture.Draw(crateTextureId);
                     
                     //Rafraichissement de la fenêtre
                     glContext.Refresh(); 
-
-                    // Incrémenter une variable qui serra affichée
-                    // le réinitialiser quand le chrono passe une seconde
                 
             }
+            glDeleteTextures(1, &crateTextureId);
+            glDeleteTextures(2, &fontTextureId);
         }       
         //Dessin plancher
             void floor(GLuint texture){

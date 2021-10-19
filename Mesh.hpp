@@ -12,7 +12,7 @@ namespace TIE {
         public:
         virtual void Load(string fileName) = 0;
 
-        virtual void Draw() = 0;
+        virtual void Draw(unsigned int crateTextureId) = 0;
     };
 }
 

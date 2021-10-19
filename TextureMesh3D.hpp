@@ -4,15 +4,20 @@
 #include "Mesh.hpp"
 #include <fstream>
 #include <bits/stdc++.h>
+#include "Vector3D.hpp"
+#include "Matrix44D.hpp"
 
 using namespace std;
 
 namespace TIE {
     class TextureMesh3D : public Mesh {
         private:
-        vector<double> vSommets, vNormals, vTextures, faces;
-        public:
+        //vector<double> vSommets, vNormals, vTextures, faces;
+        vector<double> faces;
+        unsigned int textureId;
+        double* textures, sommets, normals;
 
+        public:
         void Load(string fileName){
             ifstream file;
             vector<double> sommetsTMP, normalsTMP, texturesTMP;
@@ -33,7 +38,6 @@ namespace TIE {
                     sommetsTMP.push_back(atof(lineTMP[1].c_str()));
                     sommetsTMP.push_back(atof(lineTMP[2].c_str()));
                     sommetsTMP.push_back(atof(lineTMP[3].c_str()));
-                    vertexCount+=3;
                 }
                 else if(lineTMP[0] == "vt"){
                     texturesTMP.push_back(atof(lineTMP[1].c_str()));
@@ -54,7 +58,35 @@ namespace TIE {
                 }
             }
 
-            for(int i=0; i<faces.size()*1;i+=3){
+            size_t index3;
+            size_t index2;
+            vertexCount = sommetsTMP.size();
+            double textures[vertexCount * 2];
+            double sommets[vertexCount * 3];
+            double normals[vertexCount * 3];
+
+        /*for (size_t i = 0; i < vertexCount; i++) {
+            vIndex = vertexIndices[i] * 3; nIndex = normalIndices[i] * 3; tIndex = textureCoordIndices[i] * 2;
+            index3 = i * 3; index2 = i *2;
+
+            sommets[index3] = sommetsTMP[vIndex++];
+            normals[index3++] = normalsTMP[nIndex++];
+            textures[index2++] = texturesTMP[tIndex++];
+
+            sommetsTMP[index3] = sommetsTMP[vIndex++];
+            normals[index3++] = normalsTMP[nIndex++];
+            texturesTMP[index2] = texturesTMP[tIndex];
+
+            sommets[index3] = sommetsTMP[vIndex];
+            normals[index3] = normalsTMP[nIndex];
+          }
+
+            for(int i=0; i<faces.size()*1;i++){
+                index3 = faces[i] * 3;
+                index2 = faces[i] * 2;
+
+                sommets[index3] = sommetsTMP [index3];
+                textures[index++] = texturesTMP[index2 ]
                 vSommets.push_back(sommetsTMP[faces[i] * 3 - 3]);
                 vSommets.push_back(sommetsTMP[faces[i] * 3 - 2]);
                 vSommets.push_back(sommetsTMP[faces[i] * 3 - 1]);
@@ -65,8 +97,7 @@ namespace TIE {
                 vNormals.push_back(normalsTMP[faces[i + 2] * 3 - 3]);
                 vNormals.push_back(normalsTMP[faces[i + 2] * 3 - 2]);
                 vNormals.push_back(normalsTMP[faces[i + 2] * 3 - 1]);
-            }
-
+            }*/
         }
 
          vector<string> Split(string line, char splitChar){
@@ -81,9 +112,20 @@ namespace TIE {
             return splitLine;
         }
 
-        void Draw(){
-            unsigned int crateTextureId;
-            glGenTextures(1.0, &crateTextureId);
+        //Atelier 6, Note : & est une référence (Read only)
+        void translate(const Vector3D& v){
+
+        }
+
+        void transform(const Matrix44D& m){ //Globale
+        
+        }
+
+        void transform(const Matrix44D& m, const Vector3D& v){ //Locale
+
+        }
+
+        void Draw(unsigned int crateTextureId){
             glBindTexture(GL_TEXTURE_2D, crateTextureId);
 
             SDL_Surface* sdlSurface = IMG_Load("crate.png");
@@ -93,8 +135,7 @@ namespace TIE {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            glBindTexture(GL_TEXTURE_2D, crateTextureId);
-            double textures[vertexCount * 2];
+            /*double textures[vertexCount * 2];
             double sommets[vertexCount * 3];
             double normals[vertexCount * 3];
 
@@ -105,7 +146,7 @@ namespace TIE {
                 textures[i] = vTextures[i];
 
             for(int i=0; i<vertexCount * 3;i++)
-                normals[i] = vNormals[i];
+                normals[i] = vNormals[i];*/
 
             glEnableClientState(GL_VERTEX_ARRAY);
             glEnableClientState(GL_NORMAL_ARRAY);
